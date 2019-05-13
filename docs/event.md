@@ -454,7 +454,11 @@ end
 
 ###onSave()
 
-This is called whenever the game saves, either manually or by auto-save. This will work in both a Global script, and an Object script. It is used to allow information to persist through saving/loading, for example, to let your script remember its data previously after hitting the Undo or Redo button. By placing script information into a Lua table, then encoding that data into [JSON](event#json), you are able to save information about the script's current state onto the script's parent, in the form of a string. You can also return a string value in this function to stash it.
+Called every time the game saves; either manually, or by auto-save.
+
+`onSave()` is used to allow information to persist through saving/loading; for example, allowing a game script to remember what level it's on after an Undo.
+
+Tabletop Simulator uses [JSON](event#json) for its serialization. To convert Lua values into a JSON string, you should key the items you want to serialize into a dictionary, and pass it into `JSON.encode()`. At the end of `onSave()`, you can return this string to cache those values.
 
 !!!important
 	When using `onSave()`, information is saved into the save file you are using. Using *Save & Apply* does NOT cause it to record data, only overwriting your save will update what information `onSave()` is trying to record.
@@ -470,6 +474,9 @@ function onSave()
 	return saved_data
 end
 ```
+
+!!!info
+	In some cases where the script state changes infrequently, it might be worth caching the `script_data` manually when it is needed instead of storing it every auto-save. This will save performance.
 
 Check the [`onLoad()`](#onload) section for how to load that stored JSON information into your script.
 
